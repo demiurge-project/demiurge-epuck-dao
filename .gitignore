@@ -31,3 +31,5 @@
 *.out
 *.appe*/a/b/c/*
 
+build/
+
