@@ -1,9 +1,9 @@
-#include "ReferenceModel1Dot3.h"
+#include "ReferenceModel3Dot1.h"
 
 /****************************************/
 /****************************************/
 
-ReferenceModel1Dot3::ReferenceModel1Dot3() {
+ReferenceModel3Dot1::ReferenceModel3Dot1() {
   m_pcRng = CRandom::CreateRNG("argos");
   m_pcRabMessageBuffer = RabMessageBuffer();
   m_pcRabMessageBuffer.SetTimeLife(10);
@@ -12,26 +12,28 @@ ReferenceModel1Dot3::ReferenceModel1Dot3() {
   m_fLengthEpuckAxis = 5.3f;          // [cm]
   m_fLeftWheelVelocity = 0;
   m_fRightWheelVelocity = 0;
+  m_cLEDsColor = CColor::BLACK;
 }
 
 /****************************************/
 /****************************************/
 
-ReferenceModel1Dot3::~ReferenceModel1Dot3() {}
+ReferenceModel3Dot1::~ReferenceModel3Dot1() {}
 
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::Reset() {
+void ReferenceModel3Dot1::Reset() {
   m_fLeftWheelVelocity = 0;
   m_fRightWheelVelocity = 0;
+  m_cLEDsColor = CColor::BLACK;
   m_pcRabMessageBuffer.Reset();
 }
 
 /****************************************/
 /****************************************/
 
-CCI_EPuckProximitySensor::SReading ReferenceModel1Dot3::GetProximityReading() {
+CCI_EPuckProximitySensor::SReading ReferenceModel3Dot1::GetProximityReading() {
   CCI_EPuckProximitySensor::SReading cOutputReading;
   CVector2 cSumProxi(0, CRadians::ZERO);
   for (UInt8 i = 0; i < m_sProximityInput.size(); i++) {
@@ -51,14 +53,14 @@ CCI_EPuckProximitySensor::SReading ReferenceModel1Dot3::GetProximityReading() {
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::SetProximityInput(CCI_EPuckProximitySensor::TReadings s_prox_input) {
+void ReferenceModel3Dot1::SetProximityInput(CCI_EPuckProximitySensor::TReadings s_prox_input) {
   m_sProximityInput = s_prox_input;
 }
 
 /****************************************/
 /****************************************/
 
-CCI_EPuckLightSensor::SReading ReferenceModel1Dot3::GetLightReading() {
+CCI_EPuckLightSensor::SReading ReferenceModel3Dot1::GetLightReading() {
   CCI_EPuckLightSensor::SReading cOutputReading;
   CVector2 cSumLight(0, CRadians::ZERO);
   for (UInt8 i = 0; i < m_sLightInput.size(); i++) {
@@ -79,14 +81,14 @@ CCI_EPuckLightSensor::SReading ReferenceModel1Dot3::GetLightReading() {
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::SetLightInput(CCI_EPuckLightSensor::TReadings s_light_input) {
+void ReferenceModel3Dot1::SetLightInput(CCI_EPuckLightSensor::TReadings s_light_input) {
   m_sLightInput = s_light_input;
 }
 
 /****************************************/
 /****************************************/
 
-Real ReferenceModel1Dot3::GetGroundReading() {
+Real ReferenceModel3Dot1::GetGroundReading() {
   std::deque<CCI_EPuckGroundSensor::SReadings>::iterator it;
   UInt32 unBlackWhiteCounter[2] = {0,0};  //unBlackWhiteCounter[0] -> Black; unBlackWhiteCounter[1] -> White.
   float fBlackThreshold = 0.03;
@@ -126,7 +128,7 @@ Real ReferenceModel1Dot3::GetGroundReading() {
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input) {
+void ReferenceModel3Dot1::SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input) {
   m_deqGroundInput.push_back(s_ground_input);
   if (m_deqGroundInput.size() > 5) {
     m_deqGroundInput.pop_front();
@@ -137,21 +139,21 @@ void ReferenceModel1Dot3::SetGroundInput(CCI_EPuckGroundSensor::SReadings s_grou
 /****************************************/
 /****************************************/
 
-const UInt8 ReferenceModel1Dot3::GetNumberNeighbors() const {
+const UInt8 ReferenceModel3Dot1::GetNumberNeighbors() const {
   return m_unNumberNeighbors;
 }
 
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::SetNumberNeighbors(const UInt8& un_number_neighbors){
+void ReferenceModel3Dot1::SetNumberNeighbors(const UInt8& un_number_neighbors){
   m_unNumberNeighbors = un_number_neighbors;
 }
 
 /****************************************/
 /****************************************/
 
-CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel1Dot3::GetNeighborsCenterOfMass() {
+CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel3Dot1::GetNeighborsCenterOfMass() {
   CCI_EPuckRangeAndBearingSensor::TPackets sRabPackets = m_pcRabMessageBuffer.GetMessages();
   CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
   CVector2 sRabVectorSum(0,CRadians::ZERO);
@@ -175,7 +177,7 @@ CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel1Dot3::GetNeighbor
 /****************************************/
 /****************************************/
 
-CCI_EPuckOmnidirectionalCameraSensor::SBlob ReferenceModel1Dot3::GetNeighborsDirection() {
+CCI_EPuckOmnidirectionalCameraSensor::SBlob ReferenceModel3Dot1::GetNeighborsDirection() {
     CCI_EPuckOmnidirectionalCameraSensor::SReadings sReadings = m_sCameraInput;
     CVector2 sCamVectorSum(0,CRadians::ZERO);
 
@@ -197,7 +199,7 @@ CCI_EPuckOmnidirectionalCameraSensor::SBlob ReferenceModel1Dot3::GetNeighborsDir
 /****************************************/
 /****************************************/
 
-CCI_EPuckOmnidirectionalCameraSensor::SBlob ReferenceModel1Dot3::GetNeighborsCoesion(Real fGain, Real fTargetDistance, Real fExp) {
+CCI_EPuckOmnidirectionalCameraSensor::SBlob ReferenceModel3Dot1::GetNeighborsCoesion(Real fGain, Real fTargetDistance, Real fExp) {
     CCI_EPuckOmnidirectionalCameraSensor::SReadings sReadings = m_sCameraInput;
     CVector2 sCamVectorSum(0,CRadians::ZERO);
 
@@ -252,7 +254,45 @@ CCI_EPuckOmnidirectionalCameraSensor::SBlob ReferenceModel1Dot3::GetNeighborsCoe
 /****************************************/
 /****************************************/
 
-Real ReferenceModel1Dot3::LJMagnitude(Real fDistance, Real fGain, Real fTargetDistance, Real fExp) {
+const CColor& ReferenceModel3Dot1::GetLEDsColor() const {
+    return m_cLEDsColor;
+}
+
+/****************************************/
+/****************************************/
+
+void ReferenceModel3Dot1::SetLEDsColor(const CColor& c_color) {
+    m_cLEDsColor = c_color;
+}
+
+/****************************************/
+/****************************************/
+
+
+UInt8 ReferenceModel3Dot1::GetNumberOfRobotsInState(UInt8 un_message) {
+    CCI_EPuckOmnidirectionalCameraSensor::SReadings sReadings = m_sCameraInput;
+    UInt8 unNumberMessagingNeighbors = 0;
+
+    CCI_EPuckOmnidirectionalCameraSensor::SBlob cCamReading;
+    UInt32 unNumMsg = 0;
+
+
+    if(! sReadings.BlobList.empty()) {
+        for(size_t i = 0; i < sReadings.BlobList.size(); ++i) {
+            if (sReadings.BlobList[i]->Color == CColor::CYAN) {
+                unNumberMessagingNeighbors+=1;
+            }
+        }
+    }
+
+
+    return unNumberMessagingNeighbors/3;
+}
+
+/****************************************/
+/****************************************/
+
+Real ReferenceModel3Dot1::LJMagnitude(Real fDistance, Real fGain, Real fTargetDistance, Real fExp) {
 
     //Real fExp = m_sCoesionParams.Exponent;
     Real fDa = fTargetDistance / fDistance;
@@ -267,14 +307,14 @@ Real ReferenceModel1Dot3::LJMagnitude(Real fDistance, Real fGain, Real fTargetDi
 /****************************************/
 /****************************************/
 
-std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> ReferenceModel1Dot3::GetRangeAndBearingMessages() {
+std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> ReferenceModel3Dot1::GetRangeAndBearingMessages() {
   return m_pcRabMessageBuffer.GetMessages();
 }
 
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::SetRangeAndBearingMessages(CCI_EPuckRangeAndBearingSensor::TPackets s_packets) {
+void ReferenceModel3Dot1::SetRangeAndBearingMessages(CCI_EPuckRangeAndBearingSensor::TPackets s_packets) {
   std::map<UInt32, CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> mapRemainingMessages;
   std::map<UInt32, CCI_EPuckRangeAndBearingSensor::SReceivedPacket*>::iterator mapIt;
   CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
@@ -299,7 +339,7 @@ void ReferenceModel1Dot3::SetRangeAndBearingMessages(CCI_EPuckRangeAndBearingSen
 /****************************************/
 /****************************************/
 
-void ReferenceModel1Dot3::SetCameraInput(CCI_EPuckOmnidirectionalCameraSensor::SReadings s_camera_input) {
+void ReferenceModel3Dot1::SetCameraInput(CCI_EPuckOmnidirectionalCameraSensor::SReadings s_camera_input) {
 
     CCI_EPuckOmnidirectionalCameraSensor::SReadings s_camera_filter;
 
@@ -322,6 +362,6 @@ void ReferenceModel1Dot3::SetCameraInput(CCI_EPuckOmnidirectionalCameraSensor::S
 /****************************************/
 /****************************************/
 
-CCI_EPuckOmnidirectionalCameraSensor::SReadings ReferenceModel1Dot3::GetCameraInput() const {
+CCI_EPuckOmnidirectionalCameraSensor::SReadings ReferenceModel3Dot1::GetCameraInput() const {
     return m_sCameraInput;
 }

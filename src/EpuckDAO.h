@@ -42,49 +42,48 @@
 
 namespace argos {
 	class EpuckDAO {
-		public:
+        public:
+            virtual ~EpuckDAO();
 
-			virtual ~EpuckDAO();
+            /*
+             * Reset function.
+             */
+            virtual void Reset() = 0;
 
-			/*
-			 * Reset function.
-			 */
-			virtual void Reset() = 0;
+            /*
+             * Setter for the wheels velocity.
+             */
+            void SetWheelsVelocity(const Real& un_left_velocity, const Real& un_right_velocity);
 
-			/*
-			 * Setter for the wheels velocity.
-			 */
-			void SetWheelsVelocity(const Real& un_left_velocity, const Real& un_right_velocity);
+            /*
+             * Setter for the wheels velocity.
+             */
+            void SetWheelsVelocity(const CVector2& c_velocity_vector);
 
-			/*
-			 * Setter for the wheels velocity.
-			 */
-			void SetWheelsVelocity(const CVector2& c_velocity_vector);
+            /*
+             * Getter for the right wheel velocity.
+             */
+            const Real& GetRightWheelVelocity() const;
 
-			/*
-			 * Getter for the right wheel velocity.
-			 */
-			const Real& GetRightWheelVelocity() const;
+            /*
+             * Getter for the left wheel velocity.
+             */
+            const Real& GetLeftWheelVelocity() const;
 
-			/*
-			 * Getter for the left wheel velocity.
-			 */
-			const Real& GetLeftWheelVelocity() const;
+            /*
+             * Setter for the robot idientifier.
+             */
+            void SetRobotIdentifier(const UInt32& un_robot_id);
 
-			/*
-			 * Setter for the robot idientifier.
-			 */
-			void SetRobotIdentifier(const UInt32& un_robot_id);
+            /*
+             * Getter for the robot identifier.
+             */
+            const UInt32& GetRobotIdentifier() const;
 
-			/*
-			 * Getter for the robot identifier.
-			 */
-			const UInt32& GetRobotIdentifier() const;
-
-			/*
-			 * Getter for the maximal wheels velocity.
-			 */
-			const Real& GetMaxVelocity() const;
+            /*
+             * Getter for the maximal wheels velocity.
+             */
+            const Real& GetMaxVelocity() const;
 
             /*
              * Getter for the maximal rotacional velocity.
@@ -96,82 +95,82 @@ namespace argos {
              */
             const Real& GetLengthEpuckAxis() const;
 
-			/*
-			 * Getter for the random number generetor.
-			 */
-			CRandom::CRNG* GetRandomNumberGenerator() const;
+            /*
+             * Getter for the random number generetor.
+             */
+            CRandom::CRNG* GetRandomNumberGenerator() const;
 
 
 	/*******************/
 	/* Virtual classes */
 	/*******************/
 
-			/*
-			 * Getter for the proximity input.
-			 */
-			virtual CCI_EPuckProximitySensor::TReadings GetProximityInput() const {			// RM 1.1
-				CCI_EPuckProximitySensor::TReadings emptyReadings;
-				return emptyReadings;
-			};
+            /*
+             * Getter for the proximity input.
+             */
+            virtual CCI_EPuckProximitySensor::TReadings GetProximityInput() const {			// RM 1.1
+                    CCI_EPuckProximitySensor::TReadings emptyReadings;
+                    return emptyReadings;
+            };
 
-			virtual CCI_EPuckProximitySensor::SReading GetProximityReading() {					// RM 1.2
-				return CCI_EPuckProximitySensor::SReading();
-			};
+            virtual CCI_EPuckProximitySensor::SReading GetProximityReading() {					// RM 1.2
+                    return CCI_EPuckProximitySensor::SReading();
+            };
 
-			/*
-			 * Setter for the proximity input.
-			 */
-			virtual void SetProximityInput(CCI_EPuckProximitySensor::TReadings s_prox_input) {};
+            /*
+             * Setter for the proximity input.
+             */
+            virtual void SetProximityInput(CCI_EPuckProximitySensor::TReadings s_prox_input) {};
 
-			/*
-			 * Getter for the light input.
-			 */
-			virtual CCI_EPuckLightSensor::TReadings GetLightInput() const { 		// RM 1.1
-				CCI_EPuckLightSensor::TReadings emptyReadings;
-				return emptyReadings;
-			};
+            /*
+             * Getter for the light input.
+             */
+            virtual CCI_EPuckLightSensor::TReadings GetLightInput() const { 		// RM 1.1
+                    CCI_EPuckLightSensor::TReadings emptyReadings;
+                    return emptyReadings;
+            };
 
-			virtual CCI_EPuckLightSensor::SReading GetLightReading() {					// RM 1.2
-				return CCI_EPuckLightSensor::SReading();
-			};
+            virtual CCI_EPuckLightSensor::SReading GetLightReading() {					// RM 1.2
+                    return CCI_EPuckLightSensor::SReading();
+            };
 
-			/*
-			 * Setter for the light input.
-			 */
-			virtual void SetLightInput(CCI_EPuckLightSensor::TReadings s_light_input) {};
+            /*
+             * Setter for the light input.
+             */
+            virtual void SetLightInput(CCI_EPuckLightSensor::TReadings s_light_input) {};
 
-			/*
-			 * Getter for the ground input.
-			 */
-			virtual CCI_EPuckGroundSensor::SReadings GetGroundInput() {    // RM 1.1
-				CCI_EPuckGroundSensor::SReadings emptyReadings;
-				return emptyReadings;
-			};
+            /*
+             * Getter for the ground input.
+             */
+            virtual CCI_EPuckGroundSensor::SReadings GetGroundInput() {    // RM 1.1
+                    CCI_EPuckGroundSensor::SReadings emptyReadings;
+                    return emptyReadings;
+            };
 
-			virtual Real GetGroundReading() {																 // RM 1.2
-				return 0.0f;
-			};
+            virtual Real GetGroundReading() {																 // RM 1.2
+                    return 0.0f;
+            };
 
-			/*
-			 * Setter for the ground input.
-			 */
-			virtual void SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input) {};
+            /*
+             * Setter for the ground input.
+             */
+            virtual void SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input) {};
 
-			/*
-			 * Getter for the number of surrounding robots.
-			 */
-			virtual const UInt8 GetNumberNeighbors() const {
-				UInt8 unEmptyVariable = 0;
-				return unEmptyVariable;
-			};
+            /*
+             * Getter for the number of surrounding robots.
+             */
+            virtual const UInt8 GetNumberNeighbors() const {
+                    UInt8 unEmptyVariable = 0;
+                    return unEmptyVariable;
+            };
 
-			/*
-			 * Getter for the range-and-bearing messages.
-			 */
-			virtual std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> GetRangeAndBearingMessages() {
-				std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> emptyReadings;
-				return emptyReadings;
-			};
+            /*
+             * Getter for the range-and-bearing messages.
+             */
+            virtual std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> GetRangeAndBearingMessages() {
+                    std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> emptyReadings;
+                    return emptyReadings;
+            };
 
             /*
              * Getter for the center of mass to the neighbors computed with RaB messages
@@ -183,7 +182,7 @@ namespace argos {
             /*
              * Getter for the center of mass to the neighbors computed with the camera
              */
-            virtual CCI_EPuckOmnidirectionalCameraSensor::SBlob GetNeighborsDirection() {			// RM 1.3
+            virtual CCI_EPuckOmnidirectionalCameraSensor::SBlob GetNeighborsDirection() {			// RM 3.1
                 return CCI_EPuckOmnidirectionalCameraSensor::SBlob();
             };
 
@@ -194,22 +193,22 @@ namespace argos {
                 return CCI_EPuckOmnidirectionalCameraSensor::SBlob();
             };
 
-			/*
-			 * Getter for attraction force to the neighbors computed with RaB messages
-			 */
-			virtual CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetAttractionVectorToNeighbors(Real f_alpha_parameter) {			// RM 1.2
-				return CCI_EPuckRangeAndBearingSensor::SReceivedPacket();
-			};
+            /*
+             * Getter for attraction force to the neighbors computed with RaB messages
+             */
+            virtual CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetAttractionVectorToNeighbors(Real f_alpha_parameter) {			// RM 1.2
+                    return CCI_EPuckRangeAndBearingSensor::SReceivedPacket();
+            };
 
-			/*
-			 * Setter for the number of surrounding robots.
-			 */
-			virtual void SetNumberNeighbors(const UInt8& un_number_neighbors) {};
+            /*
+             * Setter for the number of surrounding robots.
+             */
+            virtual void SetNumberNeighbors(const UInt8& un_number_neighbors) {};
 
-			/*
-			 * Setter for the range-and-bearing input.
-			 */
-			virtual void SetRangeAndBearingMessages(CCI_EPuckRangeAndBearingSensor::TPackets s_packets) {};
+            /*
+             * Setter for the range-and-bearing input.
+             */
+            virtual void SetRangeAndBearingMessages(CCI_EPuckRangeAndBearingSensor::TPackets s_packets) {};
 
             /*
              * Setter for the camera input.
@@ -224,31 +223,53 @@ namespace argos {
                 return emptyReadings;
             };
 
-		protected:
-			/*
-			 * The left wheel velocity (output variable).
-			 */
-			Real m_fLeftWheelVelocity;
+            /*
+             * Getter the number of messages of neighbors.
+             */
+            virtual UInt8 GetNumberOfRobotsInState(UInt8 un_message) {               // RM 3.1
+                UInt8 unEmptyVariable = 0;
+                return unEmptyVariable;
+            };
 
-			/*
-			 * The right wheel velocity (output variable).
-			 */
-			Real m_fRightWheelVelocity;
+            /*
+             * Setter for the RGB LEDs color.
+             */
+            virtual void SetLEDsColor(const CColor& c_color) {}
 
-			/*
-			 * The maximal wheels velocity.
-			 */
-			Real m_fMaxVelocity;
+            /*
+             * Getter for the RGB LEDs color.
+             */
+            virtual const CColor& GetLEDsColor() const {
+                CColor emptyColor(CColor::BLACK);
+                return emptyColor;
 
-			/*
-			 * The robot identifier.
-			 */
-			UInt32 m_unRobotIdentifier;
+            }
 
-			/*
-			 * Pointer to the random number generator.
-			 */
-			CRandom::CRNG* m_pcRng;
+        protected:
+            /*
+             * The left wheel velocity (output variable).
+             */
+            Real m_fLeftWheelVelocity;
+
+            /*
+             * The right wheel velocity (output variable).
+             */
+            Real m_fRightWheelVelocity;
+
+            /*
+             * The maximal wheels velocity.
+             */
+            Real m_fMaxVelocity;
+
+            /*
+             * The robot identifier.
+             */
+            UInt32 m_unRobotIdentifier;
+
+            /*
+             * Pointer to the random number generator.
+             */
+            CRandom::CRNG* m_pcRng;
 
             /*
              * The maximal rotacional velocity.

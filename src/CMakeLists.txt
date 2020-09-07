@@ -9,21 +9,21 @@ cmake_minimum_required(VERSION 2.8)
 	link_directories(${ARGOS_LIBRARY_DIRS})
 
 	# Headers
-	set(HEADERS
-		EpuckDAO.h
-		RabMessageBuffer.h
+        set(HEADERS
+          EpuckDAO.h
+          RabMessageBuffer.h
 	  ReferenceModel1Dot1.h
 	  ReferenceModel1Dot2.h
-	  ReferenceModel1Dot3.h
+          ReferenceModel3Dot1.h
 	)
 
 	# Sources
 	set(SOURCES
-		EpuckDAO.cpp
-		RabMessageBuffer.cpp
+          EpuckDAO.cpp
+          RabMessageBuffer.cpp
 	  ReferenceModel1Dot1.cpp
 	  ReferenceModel1Dot2.cpp
-	  ReferenceModel1Dot3.cpp
+          ReferenceModel3Dot1.cpp
 	)
 #else()
 #endif(ARGOS_BUILD_FOR_SIMULATOR)

@@ -1,22 +1,22 @@
-#ifndef REFERENCE_MODEL_1_3_H
-#define REFERENCE_MODEL_1_3_H
+#ifndef REFERENCE_MODEL_3_1_H
+#define REFERENCE_MODEL_3_1_H
 
 #include "EpuckDAO.h"
 #include "RabMessageBuffer.h"
 
 using namespace argos;
 
-class ReferenceModel1Dot3: public EpuckDAO {
+class ReferenceModel3Dot1: public EpuckDAO {
   public:
     /*
      *  Class constructor.
      */
-    ReferenceModel1Dot3();
+    ReferenceModel3Dot1();
 
     /*
      * Class destructor.
      */
-    virtual ~ReferenceModel1Dot3();
+    virtual ~ReferenceModel3Dot1();
 
     /*
      * Reset function.
@@ -64,6 +64,11 @@ class ReferenceModel1Dot3: public EpuckDAO {
     virtual void SetNumberNeighbors(const UInt8& un_number_neighbors);
 
     /*
+     * Getter the number of messages of neighbors.
+     */
+    UInt8 GetNumberOfRobotsInState(UInt8 un_message);
+
+    /*
      * Getter for the range-and-bearing input.
      */
     std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> GetRangeAndBearingMessages() ;
@@ -97,6 +102,16 @@ class ReferenceModel1Dot3: public EpuckDAO {
      * Getter for the camera input.
      */
     CCI_EPuckOmnidirectionalCameraSensor::SReadings GetCameraInput() const;
+
+    /*
+     * Setter for the RGB LEDs color.
+     */
+    void SetLEDsColor(const CColor& c_color);
+
+    /*
+     * Getter for the RGB LEDs color.
+     */
+    const CColor& GetLEDsColor() const;
 
 
   private:
@@ -138,6 +153,11 @@ class ReferenceModel1Dot3: public EpuckDAO {
      * Pointer to the range-and-bearing messages buffer.
      */
     RabMessageBuffer m_pcRabMessageBuffer;
+
+    /*
+     * The color of RGB LEDs  (output variable).
+     */
+    CColor m_cLEDsColor;
 
 };
 
