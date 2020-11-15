@@ -11,9 +11,11 @@
 	  ReferenceModel1Dot2.h
 	  ReferenceModel2Dot0.h
 	  ReferenceModel2Dot1.h
-      ReferenceModel2Dot2.h
-      ReferenceModel2Dot3.h
-      ReferenceModel3Dot0.h
+    ReferenceModel2Dot2.h
+    ReferenceModel2Dot3.h
+    ReferenceModel3Dot0.h
+		ReferenceModel4Dot0.h
+		ReferenceModel4Dot1.h
 	)
 
 	# Sources
@@ -24,9 +26,11 @@
 	  ReferenceModel1Dot2.cpp
 	  ReferenceModel2Dot0.cpp
 	  ReferenceModel2Dot1.cpp
-      ReferenceModel2Dot2.cpp
-      ReferenceModel2Dot3.cpp
-      ReferenceModel3Dot0.cpp
+    ReferenceModel2Dot2.cpp
+    ReferenceModel2Dot3.cpp
+    ReferenceModel3Dot0.cpp
+		ReferenceModel4Dot0.cpp
+		ReferenceModel4Dot1.cpp
 	)
 #else()
 #endif(ARGOS_BUILD_FOR_SIMULATOR)
