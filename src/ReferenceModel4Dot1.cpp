@@ -25,6 +25,8 @@ void ReferenceModel4Dot1::Reset() {
   m_fLeftWheelVelocity = 0;
   m_fRightWheelVelocity = 0;
   m_pcRabMessageBuffer.Reset();
+  m_bGroundLEDsState = 0;
+  m_deqGroundInput.clear();
 }
 
 /****************************************/
