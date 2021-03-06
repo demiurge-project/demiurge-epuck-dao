@@ -87,8 +87,6 @@ Real ReferenceModel4Dot1::GetGroundReading() {
   float fBlackThreshold = 0.1;
   float fWhiteThreshold = 0.95;
 
-  LOG << "Queue size: " << m_deqGroundInput.size() << std::endl;
-
   if (m_deqGroundInput.size() < 5){
       CCI_EPuckGroundSensor::SReadings s_ground_input;
       s_ground_input.Center = 1.0;
@@ -104,8 +102,6 @@ Real ReferenceModel4Dot1::GetGroundReading() {
       m_deqGroundInput.push_back(s_ground_input);
       m_deqGroundInput.push_back(s_ground_input);
   }
-
-  LOG << "Queue size: " << m_deqGroundInput.size() << std::endl;
 
 
   for (it = m_deqGroundInput.begin(); it != m_deqGroundInput.end(); it++) {
@@ -128,7 +124,6 @@ Real ReferenceModel4Dot1::GetGroundReading() {
       unBlackWhiteCounter[1] += 1;
     }
 
-    LOG << "Left: " << it->Left<< " Center: " << it->Center << " Right: " << it->Right << std::endl;
   }
 
   if (unBlackWhiteCounter[0] > 10) {
@@ -147,10 +142,8 @@ Real ReferenceModel4Dot1::GetGroundReading() {
 
 void ReferenceModel4Dot1::SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input) {
 
-    LOG << "ReferenceModel4Dot1::SetGroundInput" << m_deqGroundInput.size() << std::endl;
   m_deqGroundInput.push_back(s_ground_input);
-  //LOG << "Left: " << s_ground_input.Left<< " Center: " << s_ground_input.Center << " Right: " << s_ground_input.Right << std::endl;
-  LOG << "ReferenceModel4Dot1::SetGroundInput" << m_deqGroundInput.size() << std::endl;
+
   if (m_deqGroundInput.size() > 5) {
     m_deqGroundInput.pop_front();
   }
