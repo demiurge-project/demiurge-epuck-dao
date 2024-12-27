@@ -101,6 +101,41 @@ void ReferenceModel4Dot0::SetNumberNeighbors(const UInt8& un_number_neighbors){
 /****************************************/
 /****************************************/
 
+Real TransformRangeToProximity(Real fRange) {
+  if (fRange <= 0.01) {
+    return 1.0;
+  } else if (fRange >= 0.7) {
+    return 0.0;
+  } else {
+    return 1.0 - ((fRange - 0.01) / (0.7 - 0.01));
+  }
+}
+
+/****************************************/
+/****************************************/
+
+CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetRABReading(){
+	CCI_EPuckRangeAndBearingSensor::TPackets sRabPackets = m_pcRabMessageBuffer.GetMessages();
+	CVector2 cSumRAB(0, CRadians::ZERO);
+
+	for (auto it = sRabPackets.begin(); it != sRabPackets.end(); ++it) {
+		if ((*it)->Data[0] != (UInt32) EpuckDAO::GetRobotIdentifier()) {
+			Real fProximityValue = TransformRangeToProximity((*it)->Range);
+			cSumProxi += CVector2(fProximityValue, (*it)->Bearing.SignedNormalize());
+		}
+	}
+
+	Real fProximityValue = (cSumRAB.Length() > 1) ? 1 : cSumRAB.Length();
+	
+	CCI_EPuckProximitySensor::SReading cOutputReading;
+	cOutputReading.Value = fProximityValue;
+	cOutputReading.Angle = cSumRAB.Angle().SignedNormalize();
+
+	return cOutputReading;
+
+/****************************************/
+/****************************************/
+
 CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetAttractionVectorToNeighbors(Real f_alpha_parameter) {
   CCI_EPuckRangeAndBearingSensor::TPackets sRabPackets = m_pcRabMessageBuffer.GetMessages();
   CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
