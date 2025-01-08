@@ -24,16 +24,6 @@ class ReferenceModel4Dot0: public EpuckDAO {
     virtual void Reset();
 
     /*
-     * Getter for the ground input.
-     */
-    CCI_EPuckGroundSensor::SReadings GetGroundInput();
-
-    /*
-     * Setter for the ground input.
-     */
-    void SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input);
-
-    /*
      * Getter for the number of surrounding robots.
      */
     const UInt8 GetNumberNeighbors() const;
@@ -47,6 +37,11 @@ class ReferenceModel4Dot0: public EpuckDAO {
      * Getter for the range-and-bearing input.
      */
     std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> GetRangeAndBearingMessages() ;
+    
+    /*
+    * Getter for the range-and-bearing input and transformation as the proximity information
+    */
+    CCI_EPuckProximitySensor::SReading GetRABReading() ;
 
     /*
      * Getter for the vector representing the attraction force to the neighbors computed with RaB messages
@@ -54,9 +49,14 @@ class ReferenceModel4Dot0: public EpuckDAO {
     CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetAttractionVectorToNeighbors(Real f_alpha_parameter);
 
     /*
-     * Getter for the center of mass of neighbors computed with RaB messages
+     * Getter for the vector representing the attraction force to one or multiple patch of a specific color computed with RaB messages
      */
-    CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetNeighborsCenterOfMass();
+    CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetAttractionVectorToPatch(Real f_alpha_parameter, UInt8 f_delta_parameter);
+
+    /*
+     * Getter for the minimum range between the epuck and a patch of the given color
+     */
+    Real GetMinimumRangeFromPatch(UInt32 color);
 
     /*
      * Setter for the range-and-bearing input.

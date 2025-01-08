@@ -170,6 +170,13 @@ namespace argos {
 				std::vector<CCI_EPuckRangeAndBearingSensor::SReceivedPacket*> emptyReadings;
 				return emptyReadings;
 			};
+			
+			/*
+			* Getter for the range-and-bearing input transformed as the proximity ouputs.
+			*/
+			virtual CCI_EPuckProximitySensor::SReading GetRABReading(){
+			  return CCI_EPuckProximitySensor::SReading();
+			};
 
 			/*
 			 * Getter for the number of messaging neighbors
@@ -193,7 +200,20 @@ namespace argos {
 			virtual CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetAttractionVectorToNeighbors(Real f_alpha_parameter) {			// RM 1.2
 				return CCI_EPuckRangeAndBearingSensor::SReceivedPacket();
 			};
-			                    
+
+			/*
+			 * Getter for attraction force to the patchs of the given color computed with RaB messages
+			 */
+			virtual CCI_EPuckRangeAndBearingSensor::SReceivedPacket GetAttractionVectorToPatch (Real f_alpha_parameter, UInt8 f_delta_parameter) {
+				return CCI_EPuckRangeAndBearingSensor::SReceivedPacket();
+			};
+
+			/*
+     			 * Getter for the minimum range between the epuck and a patch of the given color
+     			 */
+   			virtual  Real GetMinimumRangeFromPatch(UInt32 color){
+				return 0.0f;
+			};			                    
 				
 			/*
 			 * Getter for the vector representing the attraction force to the neighbors that are sending a message computed with RaB messages

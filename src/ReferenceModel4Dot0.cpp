@@ -6,6 +6,7 @@
 ReferenceModel4Dot0::ReferenceModel4Dot0() {
   m_pcRng = CRandom::CreateRNG("argos");
   m_pcRabMessageBuffer = RabMessageBuffer();
+  LOG << "New m_pcRabMessageBuffer" << std::endl;
   m_pcRabMessageBuffer.SetTimeLife(10);
   m_fMaxVelocity = 12;
   m_fLeftWheelVelocity = 0;
@@ -24,64 +25,6 @@ void ReferenceModel4Dot0::Reset() {
   m_fLeftWheelVelocity = 0;
   m_fRightWheelVelocity = 0;
   m_pcRabMessageBuffer.Reset();
-}
-/****************************************/
-/****************************************/
-
-CCI_EPuckGroundSensor::SReadings ReferenceModel4Dot0::GetGroundInput() {
-  std::deque<CCI_EPuckGroundSensor::SReadings>::iterator it;
-  UInt32 unBlackWhiteCounter[2] = {0,0};  //unBlackWhiteCounter[0] -> Black; unBlackWhiteCounter[1] -> White.
-  float fBlackThreshold = 0.03;
-  float fWhiteThreshold = 0.85;
-  for (it = m_deqGroundInput.begin(); it != m_deqGroundInput.end(); it++) {
-    if (it->Left < fBlackThreshold) {
-      unBlackWhiteCounter[0] += 1;
-    }
-    else if (it->Left > fWhiteThreshold) {
-      unBlackWhiteCounter[1] += 1;
-    }
-    if (it->Center < fBlackThreshold) {
-      unBlackWhiteCounter[0] +=1;
-    }
-    else if (it->Center > fWhiteThreshold) {
-      unBlackWhiteCounter[1] += 1;
-    }
-    if (it->Right < fBlackThreshold) {
-      unBlackWhiteCounter[0] +=1;
-    }
-    else if (it->Right > fWhiteThreshold) {
-      unBlackWhiteCounter[1] += 1;
-    }
-  }
-
-  CCI_EPuckGroundSensor::SReadings readings;
-  if (unBlackWhiteCounter[0] > 10) {
-    readings.Left = 0;
-    readings.Center = 0;
-    readings.Right = 0;
-  }
-  else if (unBlackWhiteCounter[1] > 10) {
-    readings.Left = 1;
-    readings.Center = 1;
-    readings.Right = 1;
-  }
-  else {
-    readings.Left = 0.5;
-    readings.Center = 0.5;
-    readings.Right = 0.5;
-  }
-
-  return readings;
-}
-
-/****************************************/
-/****************************************/
-
-void ReferenceModel4Dot0::SetGroundInput(CCI_EPuckGroundSensor::SReadings s_ground_input) {
-  m_deqGroundInput.push_back(s_ground_input);
-  if (m_deqGroundInput.size() > 5) {
-    m_deqGroundInput.pop_front();
-  }
 }
 
 /****************************************/
@@ -114,14 +57,15 @@ Real TransformRangeToProximity(Real fRange) {
 /****************************************/
 /****************************************/
 
-CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetRABReading(){
+CCI_EPuckProximitySensor::SReading ReferenceModel4Dot0::GetRABReading(){
 	CCI_EPuckRangeAndBearingSensor::TPackets sRabPackets = m_pcRabMessageBuffer.GetMessages();
 	CVector2 cSumRAB(0, CRadians::ZERO);
 
 	for (auto it = sRabPackets.begin(); it != sRabPackets.end(); ++it) {
-		if ((*it)->Data[0] != (UInt32) EpuckDAO::GetRobotIdentifier()) {
+		if ((*it)->Data[0] != (UInt32) EpuckDAO::GetRobotIdentifier() && (*it)->Data[1] != 0) {
+			// For this vector which is used to do the random walk, we don't want the information from the patch epucks
 			Real fProximityValue = TransformRangeToProximity((*it)->Range);
-			cSumProxi += CVector2(fProximityValue, (*it)->Bearing.SignedNormalize());
+			cSumRAB += CVector2(fProximityValue, (*it)->Bearing.SignedNormalize());
 		}
 	}
 
@@ -132,6 +76,7 @@ CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetRABReadi
 	cOutputReading.Angle = cSumRAB.Angle().SignedNormalize();
 
 	return cOutputReading;
+}
 
 /****************************************/
 /****************************************/
@@ -157,23 +102,44 @@ CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetAttracti
 /****************************************/
 /****************************************/
 
-CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetNeighborsCenterOfMass() {
+CCI_EPuckRangeAndBearingSensor::SReceivedPacket ReferenceModel4Dot0::GetAttractionVectorToPatch(Real f_alpha_parameter, UInt8 f_delta_parameter) {
   CCI_EPuckRangeAndBearingSensor::TPackets sRabPackets = m_pcRabMessageBuffer.GetMessages();
   CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
   CVector2 sRabVectorSum(0,CRadians::ZERO);
 
   for (it = sRabPackets.begin(); it != sRabPackets.end(); it++) {
-    if ((*it)->Data[0] != (UInt32) EpuckDAO::GetRobotIdentifier()) {
-      sRabVectorSum += CVector2((*it)->Range,(*it)->Bearing.SignedNormalize());
+    if (((*it)->Data[0] != (UInt32) EpuckDAO::GetRobotIdentifier()) && ((*it)->Data[1] == f_delta_parameter)) {
+      sRabVectorSum += CVector2(f_alpha_parameter/(1 + (*it)->Range),(*it)->Bearing.SignedNormalize());
     }
   }
 
-  sRabVectorSum /= sRabPackets.size();
   CCI_EPuckRangeAndBearingSensor::SReceivedPacket cRaBReading;
   cRaBReading.Range = sRabVectorSum.Length();
   cRaBReading.Bearing = sRabVectorSum.Angle().SignedNormalize();
 
   return cRaBReading;
+}
+
+/****************************************/
+/****************************************/
+
+Real ReferenceModel4Dot0::GetMinimumRangeFromPatch(UInt32 color) {
+  CCI_EPuckRangeAndBearingSensor::TPackets sRabPackets = m_pcRabMessageBuffer.GetMessages();
+  CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
+
+  Real minimum = 10.0;
+  LOG << "GetMinimum" << std::endl;
+  for (it = sRabPackets.begin(); it != sRabPackets.end(); it++) {
+    LOG << "Color sent " << (*it)->Data[1] << std::endl;
+    if (((*it)->Data[0] != (UInt32) EpuckDAO::GetRobotIdentifier()) && ((*it)->Data[1] == color)) {
+      LOG << "Message from someone else and black" << std::endl;
+      if ((*it)->Range) {
+        minimum = (*it)->Range;
+      }
+    }
+  }
+  LOG << "Minimum is " << minimum << std::endl;
+  return minimum;
 }
 
 /****************************************/
